@@ -14,16 +14,12 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {      
+    "paths": {
       "@nest-interview/data-access-users": [
         "libs/data-access-users/src/index.ts"
       ],
-      "@nest-interview/prisma-client": [
-        "libs/prisma-client/src/index.ts"
-      ],      
-      "@nest-interview/prisma-schema": [
-        "libs/prisma-schema/src/index.ts"
-      ],      
+      "@nest-interview/prisma-client": ["libs/prisma-client/src/index.ts"],
+      "@nest-interview/prisma-schema": ["libs/prisma-schema/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
