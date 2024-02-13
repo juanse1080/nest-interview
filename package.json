@@ -13,6 +13,8 @@
     "frontend:e2e": "nx e2e frontend-e2e",
     "frontend:test": "nx test frontend",
     "frontend:test-cov": "nx test frontend --coverage",
+    "libs/prisma-client:test": "nx test prisma-client",
+    "libs/prisma-client:test-cov": "nx test prisma-client --coverage",
     "libs/prisma": "nx prisma prisma-schema",
     "libs/prisma:migrate": "nx prisma:migrate prisma-schema",
     "libs/prisma:generate": "nx prisma:generate prisma-schema"
