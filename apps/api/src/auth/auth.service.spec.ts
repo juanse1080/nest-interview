@@ -1,9 +1,10 @@
 import { createMock } from '@golevelup/ts-jest';
 import {
+  DataAccessActionService,
   DataAccessModule,
   DataAccessUserService,
 } from '@nest-interview/data-access';
-import { User } from '@nest-interview/prisma-client';
+import { Action, Role, User } from '@nest-interview/prisma-client';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcryptjs from 'bcryptjs';
@@ -13,24 +14,23 @@ import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   const password = 'test';
-  const payload: Omit<User, 'password'> = {
+  const payload: Omit<User, 'password' | 'roles'> = {
     id: 6,
     name: 'Juan',
     email: 'juanmarcon+20@gmail.com',
     createdAt: new Date('2024-02-13T21:01:57.476Z'),
     updatedAt: new Date('2024-02-13T21:01:57.476Z'),
-    roles: [
-      {
-        id: 1,
-        name: 'Superuser',
-        code: 'SUPER',
-        createdAt: new Date('2024-02-12T19:24:12.949Z'),
-        updatedAt: null,
-      },
-    ],
   };
-
-  const user: User = {
+  const roles: Role[] = [
+    {
+      id: 1,
+      name: 'Admin',
+      code: 'ADMIN',
+      createdAt: new Date('2024-02-12T19:24:12.949Z'),
+      updatedAt: null,
+    },
+  ];
+  const user: Omit<User, 'roles'> = {
     ...payload,
     password: '$2a$10$mpriX.x8Jzvxy0SMYVxbfeXQ4yAKy2p/12qWvG9PzWTRnejND2D86',
   };
@@ -38,6 +38,7 @@ describe('AuthService', () => {
   let authService: AuthService;
   let jwtService: JwtService;
   let dataAccessUserService: DataAccessUserService;
+  let dataAccessActionService: DataAccessActionService;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -60,6 +61,9 @@ describe('AuthService', () => {
     dataAccessUserService = module.get<DataAccessUserService>(
       DataAccessUserService
     );
+    dataAccessActionService = module.get<DataAccessActionService>(
+      DataAccessActionService
+    );
   });
 
   it('should be defined', () => {
@@ -67,20 +71,44 @@ describe('AuthService', () => {
   });
 
   it('login', async () => {
-    jest.spyOn(dataAccessUserService, 'getUnique').mockResolvedValue(user);
+    const actions: Action[] = [
+      {
+        id: 1,
+        name: 'Show user',
+        code: 'user.show',
+        createdAt: new Date('2024-02-12T19:24:12.949Z'),
+        updatedAt: null,
+      },
+    ];
+
+    jest
+      .spyOn(dataAccessUserService, 'getUnique')
+      .mockResolvedValue({ ...user, roles });
+    jest.spyOn(dataAccessActionService, 'getAll').mockResolvedValue(actions);
 
     const loginResponse = await authService.login({
       email: user.email,
       password,
     });
 
-    const token = await jwtService.signAsync(payload);
+    const actionsStrings = actions.map(({ code }) => code);
 
-    expect(loginResponse).toEqual({ ...payload, token });
+    const token = await jwtService.signAsync({
+      ...payload,
+      actions: actionsStrings,
+    });
+
+    expect(loginResponse).toEqual({
+      ...payload,
+      token,
+      actions: actionsStrings,
+    });
   });
 
   it('register', async () => {
-    jest.spyOn(dataAccessUserService, 'createUser').mockResolvedValue(user);
+    jest
+      .spyOn(dataAccessUserService, 'createUser')
+      .mockResolvedValue({ ...user, roles });
 
     const registerResponse = await authService.register({
       email: user.email,
@@ -93,7 +121,7 @@ describe('AuthService', () => {
       registerResponse.password
     );
 
-    expect(registerResponse).toEqual(user);
     expect(isPasswordValid).toEqual(true);
+    expect(registerResponse).toEqual({ ...user, roles });
   });
 });

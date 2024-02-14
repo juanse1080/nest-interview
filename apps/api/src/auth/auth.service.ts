@@ -1,4 +1,7 @@
-import { DataAccessUserService } from '@nest-interview/data-access';
+import {
+  DataAccessActionService,
+  DataAccessUserService,
+} from '@nest-interview/data-access';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcryptjs from 'bcryptjs';
@@ -12,6 +15,7 @@ import { RegisterInput } from './interfaces/register.dto';
 export class AuthService {
   constructor(
     private readonly dataAccessUserService: DataAccessUserService,
+    private readonly dataAccessActionService: DataAccessActionService,
     private readonly jwtService: JwtService
   ) {}
 
@@ -34,13 +38,31 @@ export class AuthService {
 
     if (!isPasswordValid) throw new UnauthorizedException('Invalid password');
 
-    const { password: _password, ...payload } = user;
+    const { password: _password, roles, ...payload } = user;
 
-    const token = await this.jwtService.signAsync(payload);
+    const actions = await this.dataAccessActionService.getAll({
+      where: {
+        roles: {
+          some: {
+            code: {
+              in: roles.map(({ code }) => code),
+            },
+          },
+        },
+      },
+    });
+
+    const actionsStrings = actions.map(({ code }) => code);
+
+    const token = await this.jwtService.signAsync({
+      ...payload,
+      actions: actionsStrings,
+    });
 
     return {
       ...payload,
       token,
+      actions: actionsStrings,
     };
   }
 }
