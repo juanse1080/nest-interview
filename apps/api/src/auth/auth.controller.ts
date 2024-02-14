@@ -6,17 +6,22 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Request as RequestExpress } from 'express';
 import { AuthService } from './auth.service';
-import { AuthGuard } from './guard/auth.guard';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from './guard/auth.guard';
 
 @ApiTags('Auth')
 @Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Get()
+  async getData() {
+    return { message: 'Hello API' };
+  }
 
   @Post('sign-in')
   async login(@Body() body: LoginDto) {
@@ -25,7 +30,7 @@ export class AuthController {
 
   @Post('sign-up')
   async register(@Body() body: RegisterDto) {
-    return this.authService.register(body);
+    await this.authService.register(body);
   }
 
   @UseGuards(AuthGuard)

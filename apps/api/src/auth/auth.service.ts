@@ -1,16 +1,12 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-
-import { DataAccessUserService } from '@nest-interview/data-access-users';
+import { DataAccessUserService } from '@nest-interview/data-access';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcryptjs from 'bcryptjs';
 
+import { User } from '@nest-interview/prisma-client';
 import { AuthUser } from './interfaces/auth.interface';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+import { LoginInput } from './interfaces/login.interface';
+import { RegisterInput } from './interfaces/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,21 +15,17 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  async register({ password, email, name }: RegisterDto): Promise<void> {
-    const user = await this.dataAccessUserService.getUnique({ email });
-
-    if (user) throw new BadRequestException('Email already exists');
-
+  async register({ password, email, name }: RegisterInput): Promise<User> {
     const hashedPassword = await bcryptjs.hash(password, 10);
 
-    await this.dataAccessUserService.createUser({
+    return await this.dataAccessUserService.createUser({
       name,
       email,
       password: hashedPassword,
     });
   }
 
-  async login({ email, password }: LoginDto): Promise<AuthUser> {
+  async login({ email, password }: LoginInput): Promise<AuthUser> {
     const user = await this.dataAccessUserService.getUnique({ email });
 
     if (!user) throw new UnauthorizedException('Invalid email');
