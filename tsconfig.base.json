@@ -15,9 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@nest-interview/data-access-users": [
-        "libs/data-access-users/src/index.ts"
-      ],
+      "@nest-interview/data-access": ["libs/data-access/src/index.ts"],
       "@nest-interview/prisma-client": ["libs/prisma-client/src/index.ts"],
       "@nest-interview/prisma-schema": ["libs/prisma-schema/src/index.ts"]
     }
