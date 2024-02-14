@@ -41,7 +41,7 @@ describe('IsUniqueConstraint', () => {
       ...commonArgs,
     });
 
-    expect(isValid).toBe(true);
+    expect(isValid).toEqual(true);
     expect(prismaService[table].findMany).toHaveBeenCalled();
   });
 
@@ -54,7 +54,7 @@ describe('IsUniqueConstraint', () => {
       ...commonArgs,
     });
 
-    expect(isValid).toBe(false);
+    expect(isValid).toEqual(false);
     expect(prismaService[table].findMany).toHaveBeenCalled();
   });
 
@@ -63,7 +63,7 @@ describe('IsUniqueConstraint', () => {
       ...commonArgs,
     });
 
-    expect(message).toBe(
+    expect(message).toEqual(
       `${property} with value ${value} already exist in table ${table}`
     );
   });
