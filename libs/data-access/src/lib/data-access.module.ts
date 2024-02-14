@@ -1,11 +1,22 @@
-import { Module } from '@nestjs/common';
 import { PrismaClientModule } from '@nest-interview/prisma-client';
-import { DataAccessUserService } from './services/user.service';
-import { DataAccessRoleService } from './services/role.service';
+import { Module } from '@nestjs/common';
+import {
+  DataAccessActionService,
+  DataAccessRoleService,
+  DataAccessUserService,
+} from './services';
 
 @Module({
   imports: [PrismaClientModule],
-  providers: [DataAccessUserService, DataAccessRoleService],
-  exports: [DataAccessUserService, DataAccessRoleService],
+  providers: [
+    DataAccessUserService,
+    DataAccessRoleService,
+    DataAccessActionService,
+  ],
+  exports: [
+    DataAccessUserService,
+    DataAccessRoleService,
+    DataAccessActionService,
+  ],
 })
 export class DataAccessModule {}
