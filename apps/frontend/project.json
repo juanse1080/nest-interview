@@ -54,5 +54,6 @@
       "outputs": ["{options.outputFile}"]
     }
   },
-  "tags": []
+  "tags": [],
+  "implicitDependencies": ["ui"]
 }
