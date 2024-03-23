@@ -10,6 +10,8 @@
     "api:test-cov": "nx test api --coverage",
     "frontend:dev": "nx serve frontend",
     "frontend:build": "nx build frontend",
+    "frontend:storybook": "nx storybook frontend -p 6006",
+    "frontend:storybook-test": "nx test-storybook frontend --url http://127.0.0.1:6006",
     "frontend:e2e": "nx e2e frontend-e2e",
     "frontend:test": "nx test frontend",
     "frontend:test-cov": "nx test frontend --coverage",
@@ -18,15 +20,13 @@
     "libs/prisma": "nx prisma prisma-schema",
     "libs/prisma:migrate": "nx prisma:migrate prisma-schema",
     "libs/prisma:generate": "nx prisma:generate prisma-schema",
-    "libs/ui:dev": "nx storybook ui -p 6006",
-    "libs/ui:build": "nx build-storybook ui",
     "libs/ui:test": "nx test ui",
-    "libs/ui:test-cov": "nx test ui --coverage",
-    "libs/ui:storybook-test": "nx test-storybook ui --url http://127.0.0.1:6006"
+    "libs/ui:test-cov": "nx test ui --coverage"
   },
   "private": true,
   "dependencies": {
     "@golevelup/ts-jest": "^0.4.0",
+    "@hookform/resolvers": "^3.3.4",
     "@nestjs/common": "^10.0.2",
     "@nestjs/core": "^10.0.2",
     "@nestjs/jwt": "^10.2.0",
@@ -41,11 +41,14 @@
     "next": "14.0.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.50.1",
     "react-is": "18.2.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "tailwind-merge": "^2.2.1",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "yup": "^1.3.3",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",
